@@ -1,4 +1,3 @@
-import * as homebridge from 'homebridge';
 import { PlatformAccessory } from 'homebridge/lib/platformAccessory';
 
 import * as hapNodeJs from 'hap-nodejs'
@@ -13,16 +12,16 @@ import { CameraConfig, VideoConfig } from 'homebridge-camera-ffmpeg/dist/configT
 import { Service, CameraController, CameraControllerOptions } from 'homebridge/lib';
 
 
-export class HikVision implements homebridge.DynamicPlatformPlugin {
+export class HikVision {
   private homebridgeApi: API
-  private log: homebridge.Logging;
-  config: homebridge.PlatformConfig;
+  private log: any;
+  config: any;
   hikVisionApi: HikvisionApi;
   cameras: PlatformAccessory[]
 
   constructor(
-    logger: homebridge.Logging,
-    config: homebridge.PlatformConfig,
+    logger: any,
+    config: any,
     api: API
   ) {
     this.hikVisionApi = new HikvisionApi(<HikVisionNvrApiConfiguration>(config as unknown))
@@ -49,7 +48,7 @@ export class HikVision implements homebridge.DynamicPlatformPlugin {
     const cameras = await this.hikVisionApi.getCameras();
     const homebridgeCameras = cameras
       .map(function (channel: { id: string; name: string }) {
-        const cameraConfig = <homebridge.AccessoryConfig>{
+        const cameraConfig = {
           accessory: 'camera',
           name: channel.name,
           uuid: self.homebridgeApi.hap.uuid.generate(channel.id),
@@ -91,10 +90,10 @@ export class HikVision implements homebridge.DynamicPlatformPlugin {
   }
 
 
-  async configureAccessory(accessory: homebridge.PlatformAccessory) {
+  async configureAccessory(accessory: any) {
     this.log(`Configuring accessory ${accessory.displayName}`);
 
-    accessory.on(homebridge.PlatformAccessoryEvent.IDENTIFY, () => {
+    accessory.on("identify", () => {
       this.log(`${accessory.displayName} identified!`);
     });
 
