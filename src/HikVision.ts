@@ -2,12 +2,11 @@
 import * as hapNodeJs from 'hap-nodejs'
 import { HikvisionApi, HikVisionNvrApiConfiguration } from './lib/api';
 import { HikVisionCamera } from './HikVisionCamera';
-import { HIKVISION_PLATFORM_NAME, HIKVISION_PLUGIN_NAME } from './Index'
+import { HIKVISION_PLATFORM_NAME, HIKVISION_PLUGIN_NAME } from './index'
 
 import { StreamingDelegate } from 'homebridge-camera-ffmpeg/dist/streamingDelegate'
 import { Logger } from 'homebridge-camera-ffmpeg/dist/logger'
 import { CameraConfig, VideoConfig } from 'homebridge-camera-ffmpeg/dist/configTypes'
-
 
 export class HikVision {
   private homebridgeApi: any

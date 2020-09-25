@@ -1,7 +1,7 @@
 {
   "name": "@evops/homebridge-hikvision",
-  "version": "1.0.6",
-  "main": "dist/Index.js",
+  "version": "1.0.7",
+  "main": "dist/index.js",
   "license": "MIT",
   "repository": {
     "type": "git",
