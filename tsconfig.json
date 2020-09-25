@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "lib": [
+      "es2015",
+      "es2016",
+      "es2017",
+      "es2018",
+      "ES2019"
+    ],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "baseUrl": "./src"
+  },
+  "include": [
+    "./src"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "node_modules"
+  ]
+}
