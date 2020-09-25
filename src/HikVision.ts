@@ -1,28 +1,25 @@
-import { PlatformAccessory } from 'homebridge/lib/platformAccessory';
 
 import * as hapNodeJs from 'hap-nodejs'
 import { HikvisionApi, HikVisionNvrApiConfiguration } from './lib/api';
-import { HomebridgeAPI, API } from 'homebridge/lib/api';
 import { HikVisionCamera } from './HikVisionCamera';
 import { HIKVISION_PLATFORM_NAME, HIKVISION_PLUGIN_NAME } from './Index'
 
 import { StreamingDelegate } from 'homebridge-camera-ffmpeg/dist/streamingDelegate'
 import { Logger } from 'homebridge-camera-ffmpeg/dist/logger'
 import { CameraConfig, VideoConfig } from 'homebridge-camera-ffmpeg/dist/configTypes'
-import { Service, CameraController, CameraControllerOptions } from 'homebridge/lib';
 
 
 export class HikVision {
-  private homebridgeApi: API
+  private homebridgeApi: any
   private log: any;
   config: any;
   hikVisionApi: HikvisionApi;
-  cameras: PlatformAccessory[]
+  cameras: any[]
 
   constructor(
     logger: any,
     config: any,
-    api: API
+    api: any
   ) {
     this.hikVisionApi = new HikvisionApi(<HikVisionNvrApiConfiguration>(config as unknown))
     this.homebridgeApi = api;
@@ -55,8 +52,8 @@ export class HikVision {
           channelId: channel.id
         };
 
-        const camera: PlatformAccessory =
-          new HikVisionCamera(self.log, Object.assign(cameraConfig, self.config), self.homebridgeApi) as PlatformAccessory;
+        const camera: any =
+          new HikVisionCamera(self.log, Object.assign(cameraConfig, self.config), self.homebridgeApi);
 
         const cameraAccessoryInfo = camera.getService(self.homebridgeApi.hap.Service.AccessoryInformation);
         cameraAccessoryInfo!.setCharacteristic(self.homebridgeApi.hap.Characteristic.Manufacturer, 'HikVision');
@@ -65,7 +62,7 @@ export class HikVision {
         cameraAccessoryInfo!.setCharacteristic(self.homebridgeApi.hap.Characteristic.FirmwareRevision, systemInformation.DeviceInfo.firmwareVersion);
 
         // Only add new cameras that are not cached
-        if (!self.cameras.find((x: PlatformAccessory) => x.UUID === camera.UUID)) {
+        if (!self.cameras.find((x: any) => x.UUID === camera.UUID)) {
           self.configureAccessory(camera); // abusing the configureAccessory here
 
           self.homebridgeApi.registerPlatformAccessories(HIKVISION_PLUGIN_NAME, HIKVISION_PLATFORM_NAME, [camera]);
@@ -131,7 +128,7 @@ export class HikVision {
     const streamingDelegate = new StreamingDelegate(ffmpegCameraLogger, cameraConfig, this.homebridgeApi, this.homebridgeApi.hap, 'ffmpeg')
 
 
-    const cameraControllerOptions = <CameraControllerOptions>{
+    const cameraControllerOptions = <hapNodeJs.CameraControllerOptions>{
       cameraStreamCount: 5, // HomeKit requires at least 2 streams, but 1 is also just fine
       delegate: streamingDelegate,
       streamingOptions: {

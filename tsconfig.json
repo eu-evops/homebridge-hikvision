@@ -16,13 +16,14 @@
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "skipLibCheck": true
   },
   "include": [
-    "./src"
+    "./src/**/*.ts"
   ],
   "exclude": [
-    "**/*.spec.ts",
-    "node_modules"
+    "./node_modules",
+    "**/*.spec.ts"
   ]
 }

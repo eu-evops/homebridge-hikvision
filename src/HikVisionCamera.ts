@@ -2,26 +2,19 @@ import { StreamingDelegate } from 'homebridge-camera-ffmpeg/dist/streamingDelega
 import { Logger } from 'homebridge-camera-ffmpeg/dist/logger'
 import { CameraConfig } from 'homebridge-camera-ffmpeg/dist/configTypes'
 
-import * as homebridge from 'homebridge';
-import { Service, CameraController, CameraControllerOptions } from 'homebridge/lib';
-
-import { PlatformAccessory } from 'homebridge/lib/platformAccessory'
 import * as hapNodeJs from 'hap-nodejs'
-import { CameraStreamingDelegate } from 'hap-nodejs/dist'
-import { HikvisionApi as HikVisionApi, HikVisionNvrApiConfiguration } from './lib/api';
-import { HomebridgeAPI, API } from 'homebridge/lib/api';
 
-export class HikVisionCamera extends PlatformAccessory {
-  log: homebridge.Logging;
-  config: homebridge.AccessoryConfig;
-  homebridgeApi: homebridge.API;
-  camera?: homebridge.PlatformAccessory;
+export class HikVisionCamera extends hapNodeJs.Accessory {
+  log: any;
+  config: any;
+  homebridgeApi: any;
+  camera?: any;
   name: string;
   motionDetected: boolean = false
-  context: homebridge.AccessoryConfig;
+  context: any;
 
-  constructor(logger: homebridge.Logging, config: homebridge.AccessoryConfig, api: API) {
-    super(config.name, config.uuid, homebridge.Categories.CAMERA);
+  constructor(logger: any, config: any, api: any) {
+    super(config.name, config.name)
 
     this.context = config;
     this.log = logger;
@@ -29,7 +22,7 @@ export class HikVisionCamera extends PlatformAccessory {
     this.homebridgeApi = api;
     this.name = config.name;
     console.log("Initialising camera", config);
-    this.camera = new api.platformAccessory(config.name, this.UUID);
+    this.camera = new api.platformAccessory(config.name);
     this.camera.category = api.hap.Categories.CAMERA;
     const motionService = new api.hap.Service.MotionSensor(config.name, "");
     this.camera.addService(motionService);
@@ -41,18 +34,8 @@ export class HikVisionCamera extends PlatformAccessory {
 
     this.configure(this.camera);
   }
-  /**
-       *
-       * @param uuid
-       * @param subType
-       * @deprecated use {@link getServiceById} directly
-       */
-  getServiceByUUIDAndSubType<T extends hapNodeJs.WithUUID<typeof Service>>(uuid: string | T, subType: string): Service | undefined {
-    return undefined;
-  }
 
-
-  configure(accessory: homebridge.PlatformAccessory) {
+  configure(accessory: any) {
     this.log.info("Loading accessory...", accessory.context);
     const channelId = accessory.context.channelId;
     const cameraConfig = <CameraConfig>{
@@ -72,7 +55,7 @@ export class HikVisionCamera extends PlatformAccessory {
     const cameraLogger = new Logger(this.log)
     const streamingDelegate = new StreamingDelegate(cameraLogger, cameraConfig, this.homebridgeApi, this.homebridgeApi.hap, 'ffmpeg')
 
-    const cameraControllerOptions = <CameraControllerOptions>{
+    const cameraControllerOptions = <hapNodeJs.CameraControllerOptions>{
       cameraStreamCount: 5, // HomeKit requires at least 2 streams, but 1 is also just fine
       delegate: streamingDelegate,
       streamingOptions: {
