@@ -46,14 +46,14 @@ export class HikVisionNVR {
         const cameraConfig = {
           accessory: 'camera',
           name: channel.name,
-          uuid: self.homebridgeApi.hap.uuid.generate(channel.id),
           channelId: channel.id,
           hasAudio: !!channel.capabilities.StreamingChannel.Audio
         };
 
 
         // self.log, Object.assign(cameraConfig, self.config), self.homebridgeApi
-        const accessory = new self.homebridgeApi.platformAccessory(cameraConfig.name, self.homebridgeApi.hap.uuid.generate(cameraConfig.name));
+        const cameraUUID = self.homebridgeApi.hap.uuid.generate(HIKVISION_PLUGIN_NAME + cameraConfig.name)
+        const accessory = new self.homebridgeApi.platformAccessory(cameraConfig.name, cameraUUID);
         accessory.context = cameraConfig;
 
         // Only add new cameras that are not cached
