@@ -543,9 +543,10 @@ highland@^2.13.5:
   dependencies:
     util-deprecate "^1.0.2"
 
-"homebridge-camera-ffmpeg@https://github.com/homebridge-plugins/homebridge-camera-ffmpeg#v3.0.3":
+homebridge-camera-ffmpeg@v3.0.3:
   version "3.0.3"
-  resolved "https://github.com/homebridge-plugins/homebridge-camera-ffmpeg#315e8afea080bdc1d7b0c66125a29496d038af02"
+  resolved "https://registry.yarnpkg.com/homebridge-camera-ffmpeg/-/homebridge-camera-ffmpeg-3.0.3.tgz#85b1251ba18c025ad697a32850226e4f593844d7"
+  integrity sha512-h/nkM8e/mWGoR4Qg1RF4SCQu6T8bc/67BAn014pKti/xJOc98HrRZ2X+kuzmVlNasaJo0Zs6LoqN0D1QlGV8VA==
   dependencies:
     ffmpeg-for-homebridge "^0.0.9"
     get-port "^5.1.1"

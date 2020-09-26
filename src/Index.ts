@@ -1,5 +1,5 @@
 import { HomebridgeAPI } from 'homebridge/lib/api';
-import { HikVision } from './HikVision';
+import { HikVisionNVR } from './HikVisionNVR';
 
 let Accessory, hap, Service, Characteristic, UUIDGen;
 
@@ -13,5 +13,5 @@ export default function main(api: HomebridgeAPI) {
   Characteristic = api.hap.Characteristic;
   UUIDGen = api.hap.uuid;
 
-  api.registerPlatform(HIKVISION_PLUGIN_NAME, HIKVISION_PLATFORM_NAME, HikVision);
+  api.registerPlatform(HIKVISION_PLUGIN_NAME, HIKVISION_PLATFORM_NAME, HikVisionNVR);
 }

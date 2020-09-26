@@ -55,7 +55,10 @@ export class HikvisionApi {
     const channels = await this._getResponse('/ISAPI/ContentMgmt/InputProxy/channels');
     const channelStatus = await this._getResponse('/ISAPI/ContentMgmt/InputProxy/channels/status');
 
-    console.log(channels, channelStatus)
+    for (let i = 0; i < channels.InputProxyChannelList.InputProxyChannel.length; i++) {
+      const channel = channels.InputProxyChannelList.InputProxyChannel[i];
+      channel.capabilities = await this._getResponse(`/ISAPI/ContentMgmt/StreamingProxy/channels/${channel.id}01/capabilities`);
+    }
 
     return channels.InputProxyChannelList.InputProxyChannel.map((channel: { status: any; id: any; name: string }) => {
       channel.status = channelStatus.InputProxyChannelStatusList.InputProxyChannelStatus.find((cs: { id: any; }) => {
@@ -98,7 +101,6 @@ export class HikvisionApi {
       responseType: 'stream',
       headers: {}
     }).then(response => {
-      console.log(response);
       highland(response!.data)
         .map((chunk: any) => chunk.toString('utf8'))
         .filter(text => text.match(/<\?xml/))
@@ -109,7 +111,6 @@ export class HikvisionApi {
   }
 
   async get(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse | undefined> {
-    console.log("Calling", url, 'with', config);
     return this._http?.get(url, config);
   }
 

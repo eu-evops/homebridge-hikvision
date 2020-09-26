@@ -2,45 +2,56 @@ import { StreamingDelegate } from 'homebridge-camera-ffmpeg/dist/streamingDelega
 import { Logger } from 'homebridge-camera-ffmpeg/dist/logger'
 import { CameraConfig } from 'homebridge-camera-ffmpeg/dist/configTypes'
 
-import * as homebridge from 'homebridge';
-import { Service, CameraController, CameraControllerOptions } from 'homebridge/lib';
+import { Service, CameraControllerOptions } from 'homebridge/lib';
 
-import { PlatformAccessory } from 'homebridge/lib/platformAccessory'
 import * as hapNodeJs from 'hap-nodejs'
-import { CameraStreamingDelegate } from 'hap-nodejs/dist'
-import { HikvisionApi as HikVisionApi, HikVisionNvrApiConfiguration } from './lib/api';
-import { HomebridgeAPI, API } from 'homebridge/lib/api';
 
-export class HikVisionCamera extends PlatformAccessory {
-  log: homebridge.Logging;
-  config: homebridge.AccessoryConfig;
-  homebridgeApi: homebridge.API;
-  camera?: homebridge.PlatformAccessory;
+export class HikVisionCamera {
+  log: any;
+  config: any;
+  any: any;
+  camera?: any;
   name: string;
   motionDetected: boolean = false
-  context: homebridge.AccessoryConfig;
+  context: any;
+  homebridgeApi: any
+  displayName: string
+  UUID: string
+  accessory: any
 
-  constructor(logger: homebridge.Logging, config: homebridge.AccessoryConfig, api: API) {
-    super(config.name, config.uuid, homebridge.Categories.CAMERA);
+  constructor(log: any, homebridgeApi: any, accessory: any) {
+    this.log = log;
+    this.homebridgeApi = homebridgeApi;
+    this.accessory = accessory;
+    this.context = accessory.context;
 
-    this.context = config;
-    this.log = logger;
-    this.config = config;
-    this.homebridgeApi = api;
-    this.name = config.name;
-    console.log("Initialising camera", config);
-    this.camera = new api.platformAccessory(config.name, this.UUID);
-    this.camera.category = api.hap.Categories.CAMERA;
-    const motionService = new api.hap.Service.MotionSensor(config.name, "");
-    this.camera.addService(motionService);
-    this.camera.context = {
-      channelId: config.channelId
-    };
-    this.camera.getService(api.hap.Service.AccessoryInformation)!
-      .setCharacteristic(api.hap.Characteristic.Name, config.name);
+    this.displayName = this.accessory.displayName
+    this.UUID = accessory.UUID;
+    this.name = accessory.name;
 
-    this.configure(this.camera);
+    this.configure(this.accessory);
   }
+
+  getService(...args: any[]) {
+    return this.accessory.getService(...args);
+  }
+
+  configureController(...args: any[]) {
+    return this.accessory.configureController(...args);
+  }
+
+  addService(...args: any[]) {
+    return this.accessory.addService(...args);
+  }
+
+  removeService(...args: any[]) {
+    return this.accessory.removeService(...args);
+  }
+
+  on(...args: any[]) {
+    this.accessory.on(...args)
+  }
+
   /**
        *
        * @param uuid
@@ -52,25 +63,42 @@ export class HikVisionCamera extends PlatformAccessory {
   }
 
 
-  configure(accessory: homebridge.PlatformAccessory) {
-    this.log.info("Loading accessory...", accessory.context);
+  configure(accessory: any) {
+    this.log.info("[HikvisionCamera] Configuring accessory: ", accessory.displayName);
+
+
+    accessory.on("identify", () => {
+      this.log(`${accessory.displayName} identified!`);
+    });
+
+    let motionSensor: hapNodeJs.Service | undefined = accessory.getService(this.homebridgeApi.hap.Service.MotionSensor);
+    if (motionSensor) {
+      this.log.info("Re-creating motion sensor")
+      accessory.removeService(motionSensor);
+    } else {
+      this.log.warn("There was no motion sensor set up!")
+    }
+
+    motionSensor = new this.homebridgeApi.hap.Service.MotionSensor(accessory.displayName);
+    accessory.addService(motionSensor!);
+
     const channelId = accessory.context.channelId;
     const cameraConfig = <CameraConfig>{
       name: accessory.displayName,
       videoConfig: {
-        source: `-rtsp_transport tcp -re -i rtsp://${this.config.username}:${this.config.password}@${this.config.host}/Streaming/Channels/${channelId}01`,
-        stillImageSource: `-i http${this.config.secure ? 's' : ''}://${this.config.username}:${this.config.password}@${this.config.host}/ISAPI/Streaming/channels/${channelId}01/picture?videoResolutionWidth=720`,
+        source: `-rtsp_transport tcp -re -i rtsp://${accessory.context.username}:${accessory.context.password}@${accessory.context.host}/Streaming/Channels/${channelId}01`,
+        stillImageSource: `-i http${accessory.context.secure ? 's' : ''}://${accessory.context.username}:${accessory.context.password}@${accessory.context.host}/ISAPI/Streaming/channels/${channelId}01/picture?videoResolutionWidth=720`,
         maxFPS: 30,
         maxBitrate: 1800,
         maxWidth: 1920,
         vcodec: "libx264",
-        audio: true,
+        audio: accessory.context.hasAudio,
         debug: true
       }
     }
 
     const cameraLogger = new Logger(this.log)
-    const streamingDelegate = new StreamingDelegate(cameraLogger, cameraConfig, this.homebridgeApi, this.homebridgeApi.hap, 'ffmpeg')
+    const streamingDelegate = new StreamingDelegate(cameraLogger, cameraConfig, this.homebridgeApi, this.homebridgeApi.hap, '')
 
     const cameraControllerOptions = <CameraControllerOptions>{
       cameraStreamCount: 5, // HomeKit requires at least 2 streams, but 1 is also just fine
