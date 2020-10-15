@@ -20,7 +20,7 @@ To configure, add this to your `config.json` for homebridge under platforms node
 
 ```json
 {
-  platforms: [
+  "platforms": [
     {
       "platform": "Hikvision",
       "host": "nvr-host",
