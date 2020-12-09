@@ -142,28 +142,4 @@ export class HikVisionNVR {
     this.hikVisionApi.startMonitoringEvents(processHikVisionEvent);
   }
 
-
-  /*
-  fmpeg \
-    -rtsp_transport tcp \
-    -re \
-    -i rtsp://admin:Ma37dXy2019!@10.0.1.186/Streaming/Channels/201 \
-    -map 0:0 \
-    -vcodec libx265 \
-    -pix_fmt yuv420p \
-    -r 30 \
-    -f rawvideo \
-    -tune zerolatency \
-    -b:v 299k \
-    -bufsize 299k \
-    -maxrate 299k \
-    -payload_type 99 \
-    -ssrc 9224111 \
-    -f rtp \
-    -srtp_out_suite AES_CM_128_HMAC_SHA1_80 \
-    -srtp_out_params Tr6vAbfPrnz3qNRxe644XrPn86OALKDkHGEP6pGl \
-    srtp://10.0.1.114:50960?rtcpport=50960&localrtcpport=50960&pkt_size=1316 \
-    -loglevel debug
-  */
-
 }
