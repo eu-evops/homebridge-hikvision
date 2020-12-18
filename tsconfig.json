@@ -17,7 +17,8 @@
     "strict": true,
     "esModuleInterop": true,
     "baseUrl": "./src",
-    "skipLibCheck": true
+    "skipLibCheck": true, 
+    "noImplicitAny" : true
   },
   "include": [
     "./src/**/*.ts"
