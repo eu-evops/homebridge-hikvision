@@ -1,5 +1,5 @@
 import https from 'https';
-import Axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
+import Axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 import { AxiosDigest } from 'axios-digest';
 import xml2js, { Parser } from 'xml2js';
 import highland from 'highland';
