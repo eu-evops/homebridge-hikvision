@@ -3,21 +3,23 @@ import Axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
 import { AxiosDigest } from 'axios-digest';
 import xml2js, { Parser } from 'xml2js';
 import highland from 'highland';
+import { PlatformConfig } from 'homebridge';
 
-export interface HikVisionNvrApiConfiguration {
+export interface HikVisionNvrApiConfiguration extends PlatformConfig {
   host: string
   port: Number
   secure: boolean
   ignoreInsecureTls: boolean
   username: string
   password: string
+  debugFfmpeg: boolean
 }
 
 export class HikvisionApi {
   private _http?: AxiosDigest
   private _parser?: Parser
 
-  constructor(private config: HikVisionNvrApiConfiguration) {
+  constructor(config: HikVisionNvrApiConfiguration) {
     const _axios = Axios.create({
       baseURL: `http${config.secure ? 's' : ''}://${config.host}:${config.port}`,
       httpsAgent: new https.Agent({
@@ -97,6 +99,7 @@ export class HikvisionApi {
 
     const url = `/ISAPI/Event/notification/alertStream`
 
+    // TODO: what do we do if we lose our connection to the NVR? Don't we need to re-connect?
     this.get(url, {
       responseType: 'stream',
       headers: {}

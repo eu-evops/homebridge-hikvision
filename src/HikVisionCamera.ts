@@ -21,7 +21,6 @@ export class HikVisionCamera {
   any: any;
   camera?: any;
   motionDetected: boolean = false;
-  context: any;
   homebridgeApi: API;
   displayName: string;
   UUID: string;
@@ -31,8 +30,6 @@ export class HikVisionCamera {
     this.log = log;
     this.homebridgeApi = homebridgeApi;
     this.accessory = accessory;
-    this.context = accessory.context;
-
     this.displayName = this.accessory.displayName;
     this.UUID = accessory.UUID;
 
@@ -59,12 +56,6 @@ export class HikVisionCamera {
     this.accessory.on(...args);
   }
 
-  /**
-   *
-   * @param uuid
-   * @param subType
-   * @deprecated use {@link getServiceById} directly
-   */
   getServiceByUUIDAndSubType<T extends WithUUID<typeof Service>>(
     uuid: string | T,
     subType: string
@@ -98,25 +89,27 @@ export class HikVisionCamera {
     accessory.addService(motionSensor!);
 
     const channelId = accessory.context.channelId;
-    const cameraConfig = <CameraConfig>{
+    const cameraConfig = <CameraConfig> {
       name: accessory.displayName,
       videoConfig: {
-        source: `-rtsp_transport tcp -re -i rtsp://${accessory.context.username}:${accessory.context.password}@${accessory.context.host}/Streaming/Channels/${channelId}01`,
+        source: `-rtsp_transport tcp -i rtsp://${accessory.context.username}:${accessory.context.password}@${accessory.context.host}/Streaming/Channels/${channelId}01`,
         stillImageSource: `-i http${accessory.context.secure ? "s" : ""}://${
           accessory.context.username
         }:${accessory.context.password}@${
           accessory.context.host
         }/ISAPI/Streaming/channels/${channelId}01/picture?videoResolutionWidth=720`,
-        maxFPS: 30,
-        maxBitrate: 1800,
-        maxWidth: 1920,
+        maxFPS: 30, // TODO: pull this from the camera to avoid ever upsampling
+        maxBitrate: 16384, // TODO: pull this from the camera to avoid ever upsampling
+        maxWidth: 1920, // TODO: pull this from the camera to avoid ever upsampling
         vcodec: "libx264",
         audio: accessory.context.hasAudio,
-        debug: true,
+        debug: Boolean(accessory.context.debugFfmpeg),
       },
     };
 
     const cameraLogger = new Logger(this.log);
+
+    // Use the homebridge-camera-ffmpeg StreamingDelegate.
     const streamingDelegate = new StreamingDelegate(
       cameraLogger,
       cameraConfig,
@@ -134,6 +127,7 @@ export class HikVisionCamera {
         ],
         video: {
           resolutions: [
+            // TODO: put in the max framerates & resolutions from the camera config.
             [320, 180, 30],
             [320, 240, 15], // Apple Watch requires this configuration
             [320, 240, 30],
