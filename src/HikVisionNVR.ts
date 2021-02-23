@@ -35,11 +35,11 @@ export class HikVisionNVR {
     const cameras = await this.hikVisionApi.getCameras();
     this.log.debug("Found cameras: %s", JSON.stringify(cameras, null, 4));
 
-    cameras.map( (channel: {
+    cameras.map((channel: {
       id: string;
       name: string;
       capabilities: any;
-    } ) => {
+    }) => {
 
       const cameraConfig = {
         accessory: "camera",
@@ -51,7 +51,7 @@ export class HikVisionNVR {
       const cameraUUID = this.homebridgeApi.hap.uuid.generate(
         HIKVISION_PLUGIN_NAME + cameraConfig.name
       );
-      const accessory : PlatformAccessory = new this.homebridgeApi.platformAccessory(
+      const accessory: PlatformAccessory = new this.homebridgeApi.platformAccessory(
         cameraConfig.name,
         cameraUUID
       );
@@ -106,6 +106,7 @@ export class HikVisionNVR {
         this.log.info("videoloss, nothing to do...");
         break;
       case "fielddetection":
+      case "linedetection":
       case "shelteralarm":
       case "VMD":
         const motionDetected =
