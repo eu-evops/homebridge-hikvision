@@ -76,16 +76,16 @@ export class HikVisionNVR {
 
     this.log.info("Registering cameras with homebridge");
 
-    var camerasToRemove: any[] = [];
-    // Remove cameras that were not in previous call
-    this.cameras.forEach((camera: any) => {
-      if (!newAccessories.find((x: PlatformAccessory) => x.UUID === camera.UUID)) {
-        this.log(`Unregistering missing camera: ${camera.UUID}`)
-        camerasToRemove.push(camera.accessory);
-      }
-    });
+    // var camerasToRemove: any[] = [];
+    // // Remove cameras that were not in previous call
+    // this.cameras.forEach((camera: any) => {
+    //   if (!newAccessories.find((x: PlatformAccessory) => x.UUID === camera.UUID)) {
+    //     this.log(`Unregistering missing camera: ${camera.UUID}`)
+    //     camerasToRemove.push(camera.accessory);
+    //   }
+    // });
 
-    this.homebridgeApi.unregisterPlatformAccessories(HIKVISION_PLUGIN_NAME, HIKVISION_PLATFORM_NAME, camerasToRemove);
+    // this.homebridgeApi.unregisterPlatformAccessories(HIKVISION_PLUGIN_NAME, HIKVISION_PLATFORM_NAME, camerasToRemove);
   }
 
   async configureAccessory(accessory: PlatformAccessory) {
