@@ -59,7 +59,11 @@ export class HikvisionApi {
 
     for (let i = 0; i < channels.InputProxyChannelList.InputProxyChannel.length; i++) {
       const channel = channels.InputProxyChannelList.InputProxyChannel[i];
-      channel.capabilities = await this._getResponse(`/ISAPI/ContentMgmt/StreamingProxy/channels/${channel.id}01/capabilities`);
+      try {
+        channel.capabilities = await this._getResponse(`/ISAPI/ContentMgmt/StreamingProxy/channels/${channel.id}01/capabilities`);
+      } catch {
+        console.log(`Error getting cabailities for channel ${channel.id}`);
+      }
     }
 
     return channels.InputProxyChannelList.InputProxyChannel.map((channel: { status: any; id: any; name: string }) => {
