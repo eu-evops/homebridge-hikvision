@@ -108,7 +108,7 @@ export class HikVisionNVR {
   private processHikVisionEvent(event: any) {
     switch (event.EventNotificationAlert.eventType) {
       case "videoloss":
-        this.log.info("videoloss, nothing to do...");
+        this.log.debug("videoloss, nothing to do...");
         break;
       case "fielddetection":
       case "linedetection":
@@ -122,14 +122,12 @@ export class HikVisionNVR {
           (camera) => camera.accessory.context.channelId === channelId
         );
         if (!camera) {
-          return this.log.info("Could not find camera for event", event);
+          return this.log.warn("Could not find camera for event", event);
         }
 
         this.log.info(
-          "Motion detected on camera, triggering motion",
-          camera.displayName,
-          motionDetected,
-          camera.motionDetected
+          "Motion detected on camera, triggering motion for ",
+          camera.displayName
         );
 
         if (motionDetected !== camera.motionDetected) {
@@ -137,7 +135,6 @@ export class HikVisionNVR {
           const motionService = camera.getService(
             this.homebridgeApi.hap.Service.MotionSensor
           );
-          this.log.info(motionService, camera, camera.accessory);
           motionService?.setCharacteristic(
             this.homebridgeApi.hap.Characteristic.MotionDetected,
             motionDetected
