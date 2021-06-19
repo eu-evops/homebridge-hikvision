@@ -23,8 +23,11 @@ export class HikVisionNVR {
 
     this.homebridgeApi.on(
       "didFinishLaunching",
-      this.loadAccessories.bind(this)
+      this.startMonitoring.bind(this)
     );
+
+    this.loadAccessories();
+    setInterval(this.loadAccessories.bind(this), 60 * 1000);
   }
 
   async loadAccessories() {
@@ -32,10 +35,10 @@ export class HikVisionNVR {
     this.log.info("Connected to NVR system: %O", systemInformation)
 
     this.log.info("Loading cameras...");
-    const cameras = await this.hikVisionApi.getCameras();
-    this.log.debug("Found cameras: %s", JSON.stringify(cameras, null, 4));
+    const apiCameras = await this.hikVisionApi.getCameras();
+    this.log.debug("Found cameras: %s", JSON.stringify(apiCameras, null, 4));
 
-    cameras.map((channel: {
+    const newAccessories = apiCameras.map((channel: {
       id: string;
       name: string;
       capabilities: any;
@@ -45,11 +48,11 @@ export class HikVisionNVR {
         accessory: "camera",
         name: channel.name,
         channelId: channel.id,
-        hasAudio: !!channel.capabilities.StreamingChannel.Audio,
+        hasAudio: channel.capabilities ? !!channel.capabilities.StreamingChannel.Audio : false,
       };
 
       const cameraUUID = this.homebridgeApi.hap.uuid.generate(
-        HIKVISION_PLUGIN_NAME + cameraConfig.name
+        HIKVISION_PLUGIN_NAME + systemInformation.deviceID + cameraConfig.channelId
       );
       const accessory: PlatformAccessory = new this.homebridgeApi.platformAccessory(
         cameraConfig.name,
@@ -70,17 +73,19 @@ export class HikVisionNVR {
       return accessory;
     });
 
+
     this.log.info("Registering cameras with homebridge");
-    // this.cameras = homebridgeCameras;
 
+    var camerasToRemove: any[] = [];
     // Remove cameras that were not in previous call
-    // this.cameras.forEach((accessory: PlatformAccessory) => {
-    //   if (!cameras.find((x: any) => x.uuid === accessory.UUID)) {
-    //     this.homebridgeApi.unregisterPlatformAccessories(HIKVISION_PLUGIN_NAME, HIKVISION_PLATFORM_NAME, [accessory]);
-    //   }
-    // });
+    this.cameras.forEach((camera: any) => {
+      if (!newAccessories.find((x: PlatformAccessory) => x.UUID === camera.UUID)) {
+        this.log(`Unregistering missing camera: ${camera.UUID}`)
+        camerasToRemove.push(camera.accessory);
+      }
+    });
 
-    this.startMonitoring();
+    this.homebridgeApi.unregisterPlatformAccessories(HIKVISION_PLUGIN_NAME, HIKVISION_PLATFORM_NAME, camerasToRemove);
   }
 
   async configureAccessory(accessory: PlatformAccessory) {
