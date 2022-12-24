@@ -10,7 +10,7 @@
   "dependencies": {
     "axios-digest": "^0.1.1",
     "highland": "^2.13.5",
-    "homebridge-camera-ffmpeg": "v3.0.3",
+    "homebridge-camera-ffmpeg": "^3.1.4",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
@@ -19,8 +19,8 @@
     "@types/node-persist": "^3.0.0",
     "@types/xml2js": "^0.4.5",
     "homebridge": "^1.1.3",
-    "typescript": "^4.0.2",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typescript": "^4.0.2"
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",
