@@ -1,5 +1,9 @@
 # Homebridge Hikvision plugin
 
+THIS REPOSITORY IS NOW BEING ARCHIVED - I HAVE SWITCHED TO USING [SCRY](https://www.scrypted.app) WHICH PROVIDES HOMEKIT SECURE VIDEO AND WORKS A LOT MORE SEAMLESSLY.
+
+
+
 \* README written from memory, please raise an issue if things are not working as expected.
 
 Homebridge plugin that connects to your HikVision NVR and exposes your cameras in Homebridge. The plugin is heavily based on excellent [homebridge-camera-ffmpeg](https://github.com/Sunoo/homebridge-camera-ffmpeg).
